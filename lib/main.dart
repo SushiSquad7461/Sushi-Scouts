@@ -20,7 +20,7 @@ class SushiScouts extends StatefulWidget {
 
 class _SushiScoutsState extends State<SushiScouts> {
   // TODO: CHANGE VAL TO Pages.login WHEN LOGIN PAGE IS MADE
-  Pages _currentPage = Pages.cardinal;
+  Pages _currentPage = Pages.login;
 
   void setCurrentPage(newPage) {
     setState(() {
