@@ -1,14 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:sushi_scouts/src/logic/Constants.dart';
 import 'package:sushi_scouts/src/logic/data/ScoutingData.dart';
-import 'package:sushi_scouts/src/views/ui/Scouting.dart';
 
 import 'ScoutingData.dart';
 
 class ConfigFileReader {
   String configFileFolder;
   int year;
+  int? teamNum;
   Map<String, dynamic>? parsedFile;
 
   ConfigFileReader(this.configFileFolder, this.year);
@@ -18,6 +19,8 @@ class ConfigFileReader {
       final String stringifiedFile =
           await rootBundle.loadString("$configFileFolder${year}config");
       parsedFile = await json.decode(stringifiedFile);
+      teamNum = parsedFile!["teamNum"];
+      parsedFile = parsedFile!["scouting"];
     } catch (e) {
       rethrow;
     }
@@ -37,5 +40,9 @@ class ConfigFileReader {
       ret.add(ScoutingData(parsedFile![scoutingMethod], scoutingMethod));
     }
     return ret;
+  }
+
+  bool extraFeatureAccess() {
+    return AUTHORIZED_TEAMS.contains(teamNum);
   }
 }
