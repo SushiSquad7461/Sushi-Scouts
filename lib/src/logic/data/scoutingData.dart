@@ -6,83 +6,122 @@ import 'dart:convert';
 
 const String CONFIG_PATH = "assets/config/config.json";
 
-class Component {
+class ComponentInfo {
   String name;
-  List<String>? values;
+  List<String> values;
+  String color;
   String component;
-  String type;
-  Component(this.name, this.type, this.component, {this.values=null});
+
+  ComponentInfo(this.name, this.color, this.component, this.values);
+}
+
+class Component {
+  late ComponentInfo info;
+  late Data data;
+
+  String stringfy() {
+    String name = info.name;
+    String currVal = data.get();
+    return "\"$name\":\"$currVal\"\n";
+  }
+
+  Component.cc(this.data, this.info);
+
+  Component(Map<String, dynamic> parsedConfigFileComp) {
+    String type = parsedConfigFileComp["type"];
+
+    var defualtVal = (parsedConfigFileComp["values"] as List<dynamic>).isEmpty
+        ? null
+        : parsedConfigFileComp["values"][0];
+
+    if (type == "string") {
+      data = Data<String>(defualtVal ?? "");
+    } else if (type == "number") {
+      data = Data<double>(defualtVal ?? 0);
+    } else {
+      throw Exception("Config File Invalid, Type: $type is not a valid type");
+    }
+
+    info = ComponentInfo(
+        parsedConfigFileComp["name"],
+        parsedConfigFileComp["color"],
+        parsedConfigFileComp["component"],
+        parsedConfigFileComp["values"]);
+  }
 }
 
 class Section {
-  int startValue;
-  int length;
-  int color;
-  int rows;
-  int textColor;
-  String footer;
-  Section(this.startValue, this.length, this.color, this.rows, this.textColor, this.footer);
+  late String name;
+  late String footerString;
+  late String orientation;
+  late List<Component> components;
+
+  String stringfy() {
+    String capitalFirstChar = name[0].toUpperCase();
+    String ret = "$capitalFirstChar\n";
+
+    for (var i in components) {
+      ret += i.stringfy();
+    }
+
+    return ret;
+  }
+
+  Section.cc(this.name, this.footerString, this.orientation, this.components);
+
+  Section(Map<String, dynamic> parsedConfigFileSection, this.name) {
+    footerString = parsedConfigFileSection["properties"]["footer"] as String;
+    orientation =
+        parsedConfigFileSection["properties"]["orientation"] as String;
+
+    for (var component in parsedConfigFileSection["components"]) {
+      components.add(Component(component));
+    }
+  }
 }
 
 class ScoutingData {
-  Map<int, Component> components; 
-  Map<int, Data> data;
-  Map<String, List<Section>> sections;
+  String scoutingMethodName;
+  int currentStage;
+  Map<String, Section> sections = {};
 
-  ScoutingData(this.components, this.data, this.sections);
+  ScoutingData.cc(this.sections, this.scoutingMethodName,
+      {this.currentStage = 0});
 
-  static Future<List<String>> getScreens() async{
-    final String response = await rootBundle.loadString(CONFIG_PATH);
-    final dynamic config = await json.decode(response);
-    return config.keys.toList();
-  }
-
-  static Future<ScoutingData> create(String screen) async {
-    final String response = await rootBundle.loadString(CONFIG_PATH);
-    final dynamic config = await json.decode(response)[screen];
-    Map<int, Component> components = {}; 
-    Map<int, Data> data = {};
-    Map<String, List<Section>> sections = {};
-    int startValue = 0;
-    for(String key in config.keys.toList()) {
-      List<Section> section = [];
-      for(dynamic item in config[key].toList()) {
-        int length = item["components"].toList().length;
-        Map properties = item["properties"];
-        List localComponents = item["components"].toList();
-        section.add(Section(startValue, length, int.parse(properties["color"])+0xff000000, properties["rows"], int.parse(properties["textColor"])+0xff000000, properties["footer"]));
-        int end = startValue + length;
-        int start = startValue;
-        for(int i = startValue; i<end; i++) {
-          Map component = localComponents[i-start]; 
-          components[i] = Component(component["name"], component["type"], component["component"], values: (component["values"]!=null ? (component['values'] as List)?.map((item) => item as String)?.toList() : null));
-          data[i] = Data(component["type"]);
-          startValue++;
-        }
-      }
-      sections[key] = section;
+  ScoutingData(Map<String, dynamic> parsedConfigFile, this.scoutingMethodName,
+      {this.currentStage = 0}) {
+    for (var k in parsedConfigFile.keys) {
+      sections[k] = Section(parsedConfigFile[k], k);
     }
-    return ScoutingData(components, data, sections);
   }
-  
+
+  bool goToNextStage() {
+    if (currentStage >= sections.keys.length - 1) {
+      return false;
+    }
+    currentStage += 1;
+    return true;
+  }
+
+  bool goToPrevStage() {
+    if (currentStage <= 0) {
+      return false;
+    }
+    currentStage += 1;
+    return true;
+  }
+
   List<String> getStages() {
     return sections.keys.toList();
   }
 
   String stringfy() {
-    String stringified = "{";
-    List<String> stages = sections.keys.toList();
-    for(String stage in stages) {
-      int startValue = sections[stage]![0].startValue;
-      int end = sections[stage]![sections[stage]!.length-1].startValue+sections[stage]![sections[stage]!.length-1].length;
-      stringified = "$stringified\"$stage\" : {";
-      for(int i = startValue; i<end; i++) {
-        String name = components[i]!.name;
-        Data value = data[i]!;
-        stringified = "$stringified \"$name\" : \"$value\",";
-      }
-      stringified = "$stringified}\n";
+    String ret = "${scoutingMethodName[0].toUpperCase()}\n";
+
+    for (var i in sections.values) {
+      ret += i.stringfy();
     }
-    return "$stringified}";
+
+    return ret;
   }
 }

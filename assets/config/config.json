@@ -3,33 +3,35 @@
         "pregame" : [
             {
                 "properties":{
-                    "color": "0xff76a2",
-                    "rows": 2,
-                    "textColor": "000000",
-                    "footer": "Info"
+                    "footer": "Info",
+                    "orientation": "c"
                 },
                 "components":[
                     {
                         "name" : "match #",
                         "type" : "number",
-                        "component" : "number input"
+                        "component" : "number input",
+                        "color": "#FFFFFF"
                     },
                     {
                         "name" : "station",
                         "type" : "string",
                         "component" : "dropdown",
-                        "values" : ["R1", "R2", "R3", "B1", "B2", "B3"]
+                        "values" : ["R1", "R2", "R3", "B1", "B2", "B3"],
+                        "color": "#FFFFFF"
                     },
                     {
                         "name" : "team #",
                         "type" : "number",
-                        "component" : "number input"
+                        "component" : "number input",
+                        "color": "#FFFFFF"
                     },
                     {
                         "name" : "match type",
                         "type" : "string",
                         "component" : "dropdown",
-                        "values" : ["Quals", "Elims", "Practice"]
+                        "values" : ["Quals", "Elims", "Practice"],
+                        "color": "#FFFFFF"
                     }
                 ]
             }
@@ -37,46 +39,39 @@
         "auto" : [
             {
                 "properties":{
-                    "color" : "0x63cff9",
-                    "rows" : 2,
-                    "textColor" : "000000",
-                    "footer" : "Info"
+                    "footer" : "Info",
+                    "orientation": "c"
                 },
                 "components":[
                     {
                         "name" : "No Show",
                         "type" : "string",
-                        "component" : "checkbox"
+                        "component" : "checkbox",
+                        "color": "#FFFFFF"
                     },
                     {
                         "name" : "Tarmac",
                         "type" : "string",
-                        "component" : "checkbox"
-                    }
-                ]
-            },
-            {
-                "properties":{
-                    "color":"0x63cff9",
-                    "rows":2,
-                    "textColor":"000000",
-                    "footer":"Info"
-                },
-                "components":[
+                        "component" : "checkbox",
+                        "color": "#FFFFFF"
+                    },
                     {
                         "name" : "Low Hub",
                         "type" : "number",
-                        "component" : "increment"
+                        "component" : "increment",
+                        "color": "#FFFFFF"
                     },
                     {
                         "name" : "High Hub",
                         "type" : "number",
-                        "component" : "increment"
+                        "component" : "increment",
+                        "color": "#FFFFFF"
                     },
                     {
                         "name" : "HP",
                         "type" : "number",
-                        "component" : "increment"
+                        "component" : "increment",
+                        "color": "#FFFFFF"
                     }
                 ]
             }
@@ -84,16 +79,15 @@
         "teleop" : [
             {
                 "properties":{
-                    "color":"0x81f4e1",
-                    "rows":2,
-                    "textColor":"000000",
-                    "footer":"Info"
+                    "footer": "Info",
+                    "orientation": "c"
                 },
                 "components":[
                     {
                         "name" : "Low Hub",
                         "type" : "number",
-                        "component" : "increment"
+                        "component" : "increment",
+                        "color": "#FFFFFF"
                     },
                     {
                         "name" : "High Hub",
@@ -106,17 +100,16 @@
         "endgame" : [
             {
                 "properties":{
-                    "color":"0xff76a2",
-                    "rows":1,
-                    "textColor":"000000",
-                    "footer":"Info"
+                    "footer":"Info",
+                    "orientation": "c"
                 },
                 "components":[
                     {
                         "name" : "Climb Level",
                         "type" : "string",
                         "component" : "dropdown",
-                        "values" : ["No Climb", "Low Climb", "Mid Climb", "High Climb", "Traversal"]
+                        "values" : ["No Climb", "Low Climb", "Mid Climb", "High Climb", "Traversal"],
+                        "color": "#FFFFFF"
                     }  
                 ]
             }
@@ -135,12 +128,14 @@
                     {
                         "name" : "match #",
                         "type" : "number",
-                        "component" : "number input"
+                        "component" : "number input",
+                        "values": []
                     },
                     {
                         "name" : "robot #1",
                         "type" : "number",
-                        "component" : "number input"
+                        "component" : "number input",
+                        "values": []
                     },
                     {
                         "name" : "match type",
