@@ -5,10 +5,9 @@ import 'package:sushi_scouts/src/logic/data/ConfigFileReader.dart';
 import 'package:sushi_scouts/src/logic/data/ScoutingData.dart';
 
 class Scouting extends StatefulWidget {
-  final ConfigFileReader? fileReader;
-  final String? name;
+  final ScoutingData name;
 
-  const Scouting({Key? key, required this.fileReader, required this.name}) : super(key: key);
+  const Scouting({Key? key, required this.name}) : super(key: key);
 
   @override
   State<Scouting> createState() => _ScoutingState();

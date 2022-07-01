@@ -28,16 +28,23 @@ class Component {
   Component.cc(this.data, this.info);
 
   Component(Map<String, dynamic> parsedConfigFileComp) {
+    print(parsedConfigFileComp);
     String type = parsedConfigFileComp["type"];
 
     var defualtVal = (parsedConfigFileComp["values"] as List<dynamic>).isEmpty
         ? null
         : parsedConfigFileComp["values"][0];
 
+    List<String> values = [];
+
     if (type == "string") {
       data = Data<String>(defualtVal ?? "");
+      values = List<String>.from(parsedConfigFileComp["values"]);
     } else if (type == "number") {
       data = Data<double>(defualtVal ?? 0);
+      for (var i in List<double>.from(parsedConfigFileComp["values"])) {
+        values.add(i.toString());
+      }
     } else {
       throw Exception("Config File Invalid, Type: $type is not a valid type");
     }
@@ -46,7 +53,7 @@ class Component {
         parsedConfigFileComp["name"],
         parsedConfigFileComp["color"],
         parsedConfigFileComp["component"],
-        parsedConfigFileComp["values"]);
+        values);
   }
 }
 
@@ -74,7 +81,9 @@ class Section {
     orientation =
         parsedConfigFileSection["properties"]["orientation"] as String;
 
+    components = [];
     for (var component in parsedConfigFileSection["components"]) {
+      print("comp1: $component");
       components.add(Component(component));
     }
   }
@@ -91,7 +100,8 @@ class ScoutingData {
   ScoutingData(Map<String, dynamic> parsedConfigFile, this.scoutingMethodName,
       {this.currentStage = 0}) {
     for (var k in parsedConfigFile.keys) {
-      sections[k] = Section(parsedConfigFile[k], k);
+      print(parsedConfigFile[k]);
+      sections[k] = Section(parsedConfigFile[k] as Map<String, dynamic>, k);
     }
   }
 

@@ -17,10 +17,12 @@ class ConfigFileReader {
   Future<void> readConfig() async {
     try {
       final String stringifiedFile =
-          await rootBundle.loadString("$configFileFolder${year}config");
+          await rootBundle.loadString("$configFileFolder${year}config.json");
       parsedFile = await json.decode(stringifiedFile);
-      teamNum = parsedFile!["teamNum"];
+      teamNum = parsedFile!["teamNumber"];
       parsedFile = parsedFile!["scouting"];
+      print("Got Team Num $teamNum");
+      return;
     } catch (e) {
       rethrow;
     }

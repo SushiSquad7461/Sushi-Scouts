@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import "package:flutter/material.dart";
@@ -11,8 +10,8 @@ import 'package:sushi_scouts/src/views/ui/QRScreen.dart';
 import 'package:sushi_scouts/src/views/ui/Scouting.dart';
 import 'package:sushi_scouts/src/views/ui/Settings.dart';
 import 'package:sushi_scouts/src/views/util/footer.dart';
-import 'package:sushi_scouts/src/views/util/Header/HeaderTitle.dart';
 import 'package:sushi_scouts/src/views/util/header/HeaderNav.dart';
+import 'package:sushi_scouts/src/views/util/header/HeaderTitle.dart';
 
 void main() => runApp(const SushiScouts());
 
@@ -26,12 +25,9 @@ class SushiScouts extends StatefulWidget {
 class _SushiScoutsState extends State<SushiScouts> {
   // CHANGE HOW YEAR WORKS
   ConfigFileReader fileReader = ConfigFileReader(CONFIG_FILE_PATH, 2022);
-  String _currentPage = "loader";
-  late final List<ScoutingData> scoutingPages;
+  String _currentPage = "login";
+  late final Map<String, ScoutingData> scoutingPages = {};
   late final List<String> _headerNavNeeded;
-  final Map<String, MaterialPage> _pages = {
-    "login": const MaterialPage(child: Login()),
-  };
 
   void setCurrentPage(newPage) {
     setState(() {
@@ -66,20 +62,36 @@ class _SushiScoutsState extends State<SushiScouts> {
         home: FutureBuilder<void>(
             future: fileReader.readConfig(),
             builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-              if (snapshot.hasData) {
-                scoutingPages = fileReader.getScoutingDataClasses();
+              if (snapshot.connectionState == ConnectionState.done) {
+                List<ScoutingData> scoutingPagesList =
+                    fileReader.getScoutingDataClasses();
 
-                return Navigator(
-                  pages: [
-                    if (_currentPage == "login") const MaterialPage(child: Login())
-                    else if (fileReader.getScoutingMethods().contains(_currentPage)) const MaterialPage(child: Scouting(fileReader: fileReader, name: _currentPage))
-                  ],
-                  onPopPage: (route, result) {
-                    return route.didPop(result);
-                  },
-                );
+                for (var i in scoutingPagesList) {
+                  scoutingPages[i.scoutingMethodName] = i;
+                }
+
+                Size mediaQuerySize = MediaQuery.of(context).size;
+
+                return Scaffold(
+                    body: Column(children: [
+                  HeaderTitle(size: mediaQuerySize),
+                  Navigator(
+                    pages: [
+                      if (_currentPage == "login")
+                        const MaterialPage(child: Login())
+                      else if (fileReader
+                          .getScoutingMethods()
+                          .contains(_currentPage))
+                        MaterialPage(
+                            child: Scouting(name: scoutingPages[_currentPage]!))
+                    ],
+                    onPopPage: (route, result) {
+                      return route.didPop(result);
+                    },
+                  ),
+                ]));
               } else if (snapshot.hasError) {
-                return const Text("Error");
+                return Text("Error bad: ${snapshot.error}");
               } else {
                 return const Loading();
               }
