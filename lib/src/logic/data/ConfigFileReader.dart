@@ -30,7 +30,7 @@ class ConfigFileReader {
     return parsedFile != null ? parsedFile!.keys.toList() : [];
   }
 
-  ScoutingData generateScoutingData(String scoutingMethod) {
+  ScoutingData? generateScoutingData(String scoutingMethod) {
     return ScoutingData(parsedFile![scoutingMethod], scoutingMethod);
   }
 
