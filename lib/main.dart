@@ -75,6 +75,7 @@ class _SushiScoutsState extends State<SushiScouts> {
                 return Scaffold(
                     body: Column(children: [
                   HeaderTitle(size: mediaQuerySize),
+                  if (true) HeaderNav(currentPage: _currentPage, changePage: setCurrentPage, size: mediaQuerySize, screens: screens),
                   Navigator(
                     pages: [
                       if (_currentPage == "login")
