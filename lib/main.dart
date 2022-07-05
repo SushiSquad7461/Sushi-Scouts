@@ -44,9 +44,10 @@ class _SushiScoutsState extends State<SushiScouts> {
             // Read in config
             future: fileReader.readConfig(),
             builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-              if (ScreenSize.screenWidth == 0) {
-                // Set width of screen
+              if (ScreenSize.screenWidth == 0 || ScreenSize.screenHeight == 0) {
+                // Set width and height of screen
                 ScreenSize.screenWidth = MediaQuery.of(context).size.width;
+                ScreenSize.screenHeight = MediaQuery.of(context).size.height;
               }
 
               if (snapshot.connectionState == ConnectionState.done) {
