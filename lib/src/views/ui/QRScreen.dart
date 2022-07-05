@@ -29,8 +29,6 @@ class QRScreen extends StatelessWidget {
     return Scaffold(
         body: ListView(
           children: [
-            HeaderTitle(size: size),
-            HeaderNav(currentPage: previousPage, changePage: changePage, size: size, screens: screens),
             SizedBox(
               height: (size.height * 0.5+72000.0/size.width),
               child: QrImage(data: stringifiedData!),
