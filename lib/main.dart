@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import "package:flutter/material.dart";
 import 'package:sushi_scouts/src/logic/Constants.dart';
 import 'package:sushi_scouts/src/logic/data/ConfigFileReader.dart';
@@ -7,14 +5,24 @@ import 'package:sushi_scouts/src/logic/data/ScoutingData.dart';
 import 'package:sushi_scouts/src/logic/size/ScreenSize.dart';
 import 'package:sushi_scouts/src/views/ui/Loading.dart';
 import 'package:sushi_scouts/src/views/ui/Login.dart';
-import 'package:sushi_scouts/src/views/ui/QRScreen.dart';
 import 'package:sushi_scouts/src/views/ui/Scouting.dart';
-import 'package:sushi_scouts/src/views/ui/Settings.dart';
-import 'package:sushi_scouts/src/views/util/footer.dart';
 import 'package:sushi_scouts/src/views/util/header/HeaderNav.dart';
 import 'package:sushi_scouts/src/views/util/header/HeaderTitle.dart';
 
-void main() => runApp(const SushiScouts());
+void main() => runApp(const Wraper());
+
+class Wraper extends StatelessWidget {
+  const Wraper({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: Scaffold(
+        body: SushiScouts(),
+      ),
+    );
+  }
+}
 
 class SushiScouts extends StatefulWidget {
   const SushiScouts({Key? key}) : super(key: key);
@@ -26,7 +34,7 @@ class SushiScouts extends StatefulWidget {
 class _SushiScoutsState extends State<SushiScouts> {
   // CHANGE HOW YEAR WORKS
   ConfigFileReader fileReader = ConfigFileReader(CONFIG_FILE_PATH, 2022);
-  String _currentPage = "login";
+  String _currentPage = "loading";
   Map<String, ScoutingData> scoutingPages = {};
   List<String> _headerNavNeeded = [];
 
@@ -37,64 +45,66 @@ class _SushiScoutsState extends State<SushiScouts> {
     });
   }
 
+  Future<void> readConfigFile() async {
+    try {
+      await fileReader.readConfig();
+
+      setState(() {
+        for (var i in fileReader.getScoutingDataClasses()) {
+          scoutingPages[i.scoutingMethodName] = i;
+        }
+
+        _headerNavNeeded = fileReader.getScoutingMethods();
+        _headerNavNeeded.add("settings");
+
+        _currentPage = "login";
+      });
+    } catch (err) {
+      setState(() {
+        _currentPage = "error";
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    readConfigFile();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: FutureBuilder<void>(
-            // Read in config
-            future: fileReader.readConfig(),
-            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-              if (ScreenSize.screenWidth == 0 || ScreenSize.screenHeight == 0) {
-                // Set width and height of screen
-                ScreenSize.screenWidth = MediaQuery.of(context).size.width;
-                ScreenSize.screenHeight = MediaQuery.of(context).size.height;
-              }
+    ScreenSize.screenWidth = MediaQuery.of(context).size.width;
+    ScreenSize.screenHeight = MediaQuery.of(context).size.height;
 
-              if (snapshot.connectionState == ConnectionState.done) {
-                for (var i in fileReader.getScoutingDataClasses()) {
-                  scoutingPages[i.scoutingMethodName] = i;
-                }
-
-                _headerNavNeeded = fileReader.getScoutingMethods();
-                _headerNavNeeded.add("settings");
-
-                return Scaffold(
-                    body: Column(children: [
-                  const HeaderTitle(),
-                  if (true)
-                    HeaderNav(
-                        currentPage: _currentPage,
-                        changePage: setCurrentPage,
-                        screens: _headerNavNeeded),
-                  // Navigator(
-                  //   pages: [
-                  //     if (_currentPage == "login")
-                  //       const MaterialPage(child: Login())
-                  //     else if (fileReader
-                  //         .getScoutingMethods()
-                  //         .contains(_currentPage))
-                  //       MaterialPage(
-                  //           child: Scouting(name: scoutingPages[_currentPage]!))
-                  //   ],
-                  //   onPopPage: (route, result) {
-                  //     return route.didPop(result);
-                  //   },
-                  // ),
-                ]));
-              } else if (snapshot.hasError) {
-                // Error happened while reading in file
-                return Text("Error bad: ${snapshot.error}");
-              } else {
-                // Have not read in file yet
-                return const Loading();
-              }
-            })
-
-        // Navigator(
-        // pages: [_pages[_currentPage]!],
-        // onPopPage: (route, result) {
-        //   return route.didPop(result);
-        // },
-        );
+    return Column(children: [
+      const HeaderTitle(),
+      if (_headerNavNeeded.contains(_currentPage))
+        HeaderNav(
+            currentPage: _currentPage,
+            changePage: setCurrentPage,
+            screens: _headerNavNeeded),
+      SizedBox(
+        height: _headerNavNeeded.contains(_currentPage)
+            ? ScreenSize.shu * 0.5
+            : ScreenSize.shu * 0.5,
+        width: ScreenSize.swu,
+        child: Navigator(
+          pages: [
+            if (_currentPage == "login")
+              const MaterialPage(child: Login())
+            else if (_currentPage == "loading") // TODO: FIX LOADING PAGE
+              const MaterialPage(child: Loading())
+            else if (_currentPage == "error") // TODO: ADD ERROR PAGE
+              const MaterialPage(child: Text("Error"))
+            else if (fileReader.getScoutingMethods().contains(_currentPage))
+              MaterialPage(child: Scouting(name: scoutingPages[_currentPage]!))
+          ],
+          onPopPage: (route, result) {
+            return route.didPop(result);
+          },
+        ),
+      ),
+    ]);
   }
 }

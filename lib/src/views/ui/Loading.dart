@@ -7,6 +7,6 @@ class Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text("im loading");
+    return const Center(child: Text("im loading"));
   }
 }

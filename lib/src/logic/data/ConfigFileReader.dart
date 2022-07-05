@@ -21,7 +21,6 @@ class ConfigFileReader {
       parsedFile = await json.decode(stringifiedFile);
       teamNum = parsedFile!["teamNumber"];
       parsedFile = parsedFile!["scouting"];
-      print("Got Team Num $teamNum");
       return;
     } catch (e) {
       rethrow;
