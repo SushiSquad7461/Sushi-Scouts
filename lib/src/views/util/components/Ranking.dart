@@ -8,10 +8,12 @@ class Ranking extends StatefulWidget {
   final Data defaultValue;
   final Color color;
   final Color textColor;
-  final double width;
+  double width;
   final List<String>? values;
   Ranking({Key? key, required this.name, required this.data, required this.defaultValue, required this.color, required this.width, required this.textColor, this.values})
-    : super(key: key);
+    : super(key: key){
+      width = width * 0.8;
+    }
   static Ranking create(Key key, String name, Data data, List<String>? values, Data defaultValue, Color color, double width, Color textColor) {
     return Ranking(key: key, name: name, data: data, width: width, defaultValue: defaultValue, color: color, values: values, textColor: textColor,);
   }
@@ -38,7 +40,8 @@ class RankingState extends State<Ranking>{
   Widget build(BuildContext context) {
     double width = widget.width/1.3;
     widget.data.set(widget.values!.toString(), setByUser: true);
-    return Center(
+    return Padding(
+      padding: EdgeInsets.only(left: width/6),
       child: Row(
         children: [
           Text( widget.values![0],

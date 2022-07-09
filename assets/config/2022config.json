@@ -36,7 +36,7 @@
                                 "name": "match type",
                                 "type": "string",
                                 "component": "multiselect",
-                                "values" : ["Quals", "Elims", "Prac"]
+                                "values" : ["c", "Quals", "Elims", "Prac"]
                             }
                         ]
                     }
@@ -109,7 +109,7 @@
                             "textColor":"#000000",
                             "darkColor": "#ff",
                             "darkTextColor": "#fffff",
-                            "componentsInRow": [1, 1]
+                            "componentsInRow": [2, 1]
                         },
                         "components":[
                             {
@@ -121,31 +121,13 @@
                                 "name" : "High Hub",
                                 "type" : "number",
                                 "component" : "increment"
-                            }       
-                        ]
-                    }
-                ]
-            },
-            "endgame" : {
-                "footer": "endgame",
-                "sections": [
-                    {
-                        "properties":{
-                            "title":"",
-                            "color":"#ff76a2",
-                            "rows":1,
-                            "textColor":"#000000",
-                            "darkColor": "#ff",
-                            "darkTextColor": "#fffff",
-                            "componentsInRow": [1]
-                        },
-                        "components":[
+                            },
                             {
                                 "name" : "Climb Level",
                                 "type" : "string",
                                 "component" : "multiselect",
-                                "values" : ["No Climb", "Low Climb", "Mid Climb", "High Climb", "Traversal"]
-                            }  
+                                "values" : ["c", "No Climb", "Low Climb", "Mid Climb", "High Climb", "Traversal"]
+                            }       
                         ]
                     }
                 ]
@@ -180,7 +162,7 @@
                                 "name": "match type",
                                 "type": "string",
                                 "component": "multiselect",
-                                "values" : ["Quals", "Elims", "Prac"]
+                                "values" : ["c", "Quals", "Elims", "Prac"]
                             }
                         ]
                     },
@@ -209,7 +191,7 @@
                                 "name": "side",
                                 "type": "string",
                                 "component": "multiselect",
-                                "values" : ["Red", "Blue"]
+                                "values" : ["c", "Red", "Blue"]
                             }
                         ]
                     }
@@ -279,20 +261,26 @@
             }
         },
         "pit":{
-            "pregame" : {
-                "footer": "info",
+            "page3" : {
+                "footer": " ",
                 "sections" : [
                     {
                         "properties":{
-                            "title":"",
+                            "title":"Preference",
                             "color": "#ff76a2",
                             "rows": 1,
                             "textColor": "#000000",
                             "darkColor": "#ff",
                             "darkTextColor": "#fffff",
-                            "componentsInRow": [1]
+                            "componentsInRow": [2]
                         },
                         "components":[
+                            {
+                                "name" : "preference",
+                                "type" : "string",
+                                "component" : "multiselect",
+                                "values" : ["r", "Offense", "Defense"]
+                            },
                             {
                                 "name" : "Notes",
                                 "type" : "string",

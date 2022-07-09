@@ -74,7 +74,7 @@ class TextInputState extends State<TextInput> {
             width: widget.width,
             height: widget.width * 0.6,
             decoration: BoxDecoration(
-                border: Border.all(width: widget.width * 0.02),
+                border: Border.all(width: widget.width * 0.02, color: widget.color,),
                 shape: BoxShape.rectangle,
                 borderRadius:
                     BorderRadius.all(Radius.circular(widget.width * 0.1))),
